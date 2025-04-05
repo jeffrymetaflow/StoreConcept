@@ -123,14 +123,18 @@ with tab3:
             st.write("- AppDynamics flagged latency > 4s")
             st.write("- Intersight auto-scaled checkout app")
             st.write("- Transaction time reduced from 5.2s to 2.3s")
+            st.image("images/latency_spike_appd.png", caption="AppDynamics: Latency Spike in Checkout Flow")
         elif scenario == "WAN Link Failure":
             st.write("- ThousandEyes detected outage")
             st.write("- SD-WAN rerouted traffic automatically")
             st.write("- No impact to store operations")
+            st.image("images/wan_outage_path.png", caption="ThousandEyes: Path Outage Detected and Rerouted")
         elif scenario == "Unauthorized IoT Device":
             st.write("- SecureX flagged unknown MAC address")
             st.write("- Device quarantined within 45 seconds")
             st.write("- No lateral movement detected")
+            st.image("images/iot_securex_alert.png", caption="SecureX: IoT Device Quarantined")
 
 st.markdown("---")
 st.caption("Cisco Internal | Walmart Strategic Program Console")
+
