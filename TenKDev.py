@@ -92,30 +92,45 @@ with tab3:
     scenario = st.selectbox("Choose a Scenario", [
         "Checkout Latency Spike",
         "WAN Link Failure",
-        "Unauthorized IoT Device",
-        "Edge Node Failure"
+        "Unauthorized IoT Device"
     ])
 
     if st.button("Run Simulation"):
-        with st.spinner("🧠 Detecting anomaly..."):
-            time.sleep(1.5)
-            st.success("🚨 Incident Detected: " + scenario)
+        st.subheader("🚦 Incident Simulation")
 
-        with st.spinner("🔍 Cisco Tools Analyzing: AppDynamics, ThousandEyes, SecureX..."):
-            time.sleep(2)
-            st.info("🧠 Root cause identified, AI model triggered response workflow")
+        progress_text = "⏳ Starting scenario simulation..."
+        progress_bar = st.progress(0, text=progress_text)
 
-        with st.spinner("⚙️ Executing Automated Response..."):
-            time.sleep(2)
-            st.success("✅ Issue resolved via AIOps automation")
+        for i in range(1, 6):
+            time.sleep(1)
+            if i == 1:
+                progress_text = f"Step {i}/5: Incident Detected"
+            elif i == 2:
+                progress_text = f"Step {i}/5: Cisco AIOps Tools Engaged"
+            elif i == 3:
+                progress_text = f"Step {i}/5: Root Cause Identified"
+            elif i == 4:
+                progress_text = f"Step {i}/5: Remediation Triggered"
+            else:
+                progress_text = f"Step {i}/5: Issue Resolved ✅"
+            progress_bar.progress(i * 20, text=progress_text)
 
-        st.balloons()
+        st.success("🎉 Scenario Completed Successfully!")
+
         st.markdown("---")
         st.subheader("📊 Outcome")
-        st.write("- Time to Detect: 2.5 seconds")
-        st.write("- Time to Remediate: 45 seconds")
-        st.write("- CX Impact: Avoided 30% revenue loss at checkout")
-        st.write("- Ops Saved: 1.2 NOC engineer hours")
+        if scenario == "Checkout Latency Spike":
+            st.write("- AppDynamics flagged latency > 4s")
+            st.write("- Intersight auto-scaled checkout app")
+            st.write("- Transaction time reduced from 5.2s to 2.3s")
+        elif scenario == "WAN Link Failure":
+            st.write("- ThousandEyes detected outage")
+            st.write("- SD-WAN rerouted traffic automatically")
+            st.write("- No impact to store operations")
+        elif scenario == "Unauthorized IoT Device":
+            st.write("- SecureX flagged unknown MAC address")
+            st.write("- Device quarantined within 45 seconds")
+            st.write("- No lateral movement detected")
 
 st.markdown("---")
 st.caption("Cisco Internal | Walmart Strategic Program Console")
