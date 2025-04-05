@@ -1,1 +1,4 @@
+git add images/
+git commit -m "Add scenario visuals for Streamlit"
+git push origin main
 
