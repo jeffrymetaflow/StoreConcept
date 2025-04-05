@@ -2,6 +2,7 @@
 
 import streamlit as st
 import pandas as pd
+import time
 
 # Page Config
 st.set_page_config(
@@ -12,7 +13,7 @@ st.set_page_config(
 st.title("📊 Walmart–Cisco Platform Rollout Console")
 
 # Tabs for multiple functions
-tab1, tab2 = st.tabs(["💰 Cost Simulator", "📊 KPI Tracker"])
+tab1, tab2, tab3 = st.tabs(["💰 Cost Simulator", "📊 KPI Tracker", "🧪 Scenario Simulator"])
 
 # --- Tab 1: Cost Simulator ---
 with tab1:
@@ -82,6 +83,39 @@ with tab2:
     st.write(f"**Network Uptime**: {uptime}%")
     st.write(f"**Latency**: {latency} ms")
     st.write(f"**CX Score**: {cx_score}/10")
+
+# --- Tab 3: Scenario Simulator ---
+with tab3:
+    st.header("🧪 Scenario Simulator")
+    st.markdown("Simulate a real-world issue and how Cisco AIOps responds.")
+
+    scenario = st.selectbox("Choose a Scenario", [
+        "Checkout Latency Spike",
+        "WAN Link Failure",
+        "Unauthorized IoT Device",
+        "Edge Node Failure"
+    ])
+
+    if st.button("Run Simulation"):
+        with st.spinner("🧠 Detecting anomaly..."):
+            time.sleep(1.5)
+            st.success("🚨 Incident Detected: " + scenario)
+
+        with st.spinner("🔍 Cisco Tools Analyzing: AppDynamics, ThousandEyes, SecureX..."):
+            time.sleep(2)
+            st.info("🧠 Root cause identified, AI model triggered response workflow")
+
+        with st.spinner("⚙️ Executing Automated Response..."):
+            time.sleep(2)
+            st.success("✅ Issue resolved via AIOps automation")
+
+        st.balloons()
+        st.markdown("---")
+        st.subheader("📊 Outcome")
+        st.write("- Time to Detect: 2.5 seconds")
+        st.write("- Time to Remediate: 45 seconds")
+        st.write("- CX Impact: Avoided 30% revenue loss at checkout")
+        st.write("- Ops Saved: 1.2 NOC engineer hours")
 
 st.markdown("---")
 st.caption("Cisco Internal | Walmart Strategic Program Console")
