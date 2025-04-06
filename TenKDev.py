@@ -3,6 +3,7 @@
 import streamlit as st
 import pandas as pd
 import time
+import pydeck as pdk
 
 # Page Config
 st.set_page_config(
@@ -13,7 +14,7 @@ st.set_page_config(
 st.title("📊 Walmart–Cisco Platform Rollout Console")
 
 # Tabs for multiple functions
-tab1, tab2, tab3, tab4 = st.tabs(["💰 Cost Simulator", "📊 KPI Tracker", "🧪 Scenario Simulator", "🧭 Strategy Overview"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["💰 Cost Simulator", "📊 KPI Tracker", "🧪 Scenario Simulator", "🧭 Strategy Overview", "🌍 Global Store Rollout Map"])
 
 # --- Tab 1: Cost Simulator ---
 with tab1:
@@ -117,26 +118,14 @@ with tab3:
             st.write("- AppDynamics flagged latency > 4s")
             st.write("- Intersight auto-scaled checkout app")
             st.write("- Transaction time reduced from 5.2s to 2.3s")
-            try:
-                st.image("images/latency_spike_appd.png", caption="AppDynamics: Latency Spike in Checkout Flow")
-            except Exception:
-                st.warning("⚠️ Image failed to load. Please check file format and path.")
         elif scenario == "WAN Link Failure":
             st.write("- ThousandEyes detected outage")
             st.write("- SD-WAN rerouted traffic automatically")
             st.write("- No impact to store operations")
-            try:
-                st.image("images/wan_outage_path.png", caption="ThousandEyes: Path Outage Detected and Rerouted")
-            except Exception:
-                st.warning("⚠️ Image failed to load. Please check file format and path.")
         elif scenario == "Unauthorized IoT Device":
             st.write("- SecureX flagged unknown MAC address")
             st.write("- Device quarantined within 45 seconds")
             st.write("- No lateral movement detected")
-            try:
-                st.image("images/iot_securex_alert.png", caption="SecureX: IoT Device Quarantined")
-            except Exception:
-                st.warning("⚠️ Image failed to load. Please check file format and path.")
 
 # --- Tab 4: Strategy Overview ---
 with tab4:
@@ -144,31 +133,19 @@ with tab4:
     st.markdown("This section outlines the platform strategy for Cisco + Walmart innovation.")
 
     with st.expander("🌐 Modular Platform Architecture"):
-        try:
-            st.image("images/strategy_modularity.png", caption="Modular Architecture Across Domains")
-        except:
-            st.info("Upload 'strategy_modularity.png' to the images folder")
+        st.image("images/strategy_modularity.png", caption="Modular Architecture Across Domains")
         st.write("The strategy is built on modular domains: network, security, edge, observability...")
 
     with st.expander("📈 Phased Rollout Model"):
-        try:
-            st.image("images/strategy_phased.png", caption="Phase 1 → Pilot | Phase 2 → Scale")
-        except:
-            st.info("Upload 'strategy_phased.png' to the images folder")
+        st.image("images/strategy_phased.png", caption="Phase 1 → Pilot | Phase 2 → Scale")
         st.write("From pilot deployment to full-scale rollout across 5,000 stores...")
 
     with st.expander("🔑 Success Metrics & Governance"):
-        try:
-            st.image("images/strategy_kpi.png", caption="Joint KPIs + Innovation Council")
-        except:
-            st.info("Upload 'strategy_kpi.png' to the images folder")
+        st.image("images/strategy_kpi.png", caption="Joint KPIs + Innovation Council")
         st.write("Joint KPIs, co-governance council, and quarterly reviews ensure value realization.")
 
     with st.expander("📦 Materials Module List"):
-        try:
-            st.image("images/module_materials_list.png", caption="Component Breakdown by Module")
-        except:
-            st.info("Upload 'module_materials_list.png' to the images folder")
+        st.image("images/module_materials_list.png", caption="Component Breakdown by Module")
         st.write("This list outlines required hardware, licenses, and software by strategic domain.")
 
     try:
@@ -176,6 +153,49 @@ with tab4:
             st.download_button("📥 Download Full Strategy Deck", f, file_name="Cisco_Walmart_Strategy_Concept.pptx")
     except:
         st.warning("⚠️ Strategy deck not found. Upload 'Strategy Concept.pptx' to your app directory.")
+
+# --- Tab 5: Global Rollout Map ---
+with tab5:
+    st.header("🌍 Global Store Rollout Map")
+    st.markdown("This live map shows store deployment status across global locations.")
+
+    data = pd.DataFrame([
+        {"store": "New York", "lat": 40.7128, "lon": -74.0060, "status": "Implemented"},
+        {"store": "London", "lat": 51.5074, "lon": -0.1278, "status": "In Progress"},
+        {"store": "Tokyo", "lat": 35.6895, "lon": 139.6917, "status": "Not Implemented"},
+        {"store": "Chicago", "lat": 41.8781, "lon": -87.6298, "status": "Implemented"},
+        {"store": "Paris", "lat": 48.8566, "lon": 2.3522, "status": "In Progress"},
+        {"store": "Delhi", "lat": 28.6139, "lon": 77.2090, "status": "Not Implemented"},
+        {"store": "Los Angeles", "lat": 34.0522, "lon": -118.2437, "status": "Implemented"},
+        {"store": "Berlin", "lat": 52.5200, "lon": 13.4050, "status": "In Progress"},
+        {"store": "Shanghai", "lat": 31.2304, "lon": 121.4737, "status": "Not Implemented"},
+        {"store": "São Paulo", "lat": -23.5505, "lon": -46.6333, "status": "Implemented"},
+    ])
+
+    status_colors = {
+        "Implemented": [0, 200, 0],
+        "In Progress": [255, 215, 0],
+        "Not Implemented": [255, 0, 0]
+    }
+    data["color"] = data["status"].apply(lambda x: status_colors[x])
+
+    layer = pdk.Layer(
+        "ScatterplotLayer",
+        data=data,
+        get_position='[lon, lat]',
+        get_color='color',
+        get_radius=80000,
+        pickable=True
+    )
+
+    view_state = pdk.ViewState(latitude=20, longitude=0, zoom=1.3)
+
+    st.pydeck_chart(pdk.Deck(
+        map_style="mapbox://styles/mapbox/light-v9",
+        initial_view_state=view_state,
+        layers=[layer],
+        tooltip={"text": "{store}: {status}"}
+    ))
 
 st.markdown("---")
 st.caption("Cisco Internal | Walmart Strategic Program Console")
