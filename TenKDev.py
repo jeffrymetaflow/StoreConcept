@@ -13,7 +13,7 @@ st.set_page_config(
 st.title("📊 Walmart–Cisco Platform Rollout Console")
 
 # Tabs for multiple functions
-tab1, tab2, tab3 = st.tabs(["💰 Cost Simulator", "📊 KPI Tracker", "🧪 Scenario Simulator"])
+tab1, tab2, tab3, tab4 = st.tabs(["💰 Cost Simulator", "📊 KPI Tracker", "🧪 Scenario Simulator", "🧭 Strategy Overview"])
 
 # --- Tab 1: Cost Simulator ---
 with tab1:
@@ -27,7 +27,6 @@ with tab1:
 
     discount_map = {"None": 0.00, "30%": 0.30, "40%": 0.40, "55%": 0.55}
 
-    # Estimated base cost per module per store (list price)
     base_cost_per_store = {
         "Network Modernization": 7000,
         "Edge Compute + 5G": 45000,
@@ -52,7 +51,6 @@ with tab1:
     st.subheader("📈 Estimated 3-Year Program Cost")
     st.metric("Total Cost", f"${total_cost:,.0f}", help="Includes all selected modules")
 
-    # Module Breakdown Chart
     st.bar_chart(pd.Series(module_breakdown))
 
     st.header("📂 Download Resources")
@@ -103,38 +101,74 @@ with tab3:
 
         for i in range(1, 6):
             time.sleep(1)
-            if i == 1:
-                progress_text = f"Step {i}/5: Incident Detected"
-            elif i == 2:
-                progress_text = f"Step {i}/5: Cisco AIOps Tools Engaged"
-            elif i == 3:
-                progress_text = f"Step {i}/5: Root Cause Identified"
-            elif i == 4:
-                progress_text = f"Step {i}/5: Remediation Triggered"
-            else:
-                progress_text = f"Step {i}/5: Issue Resolved ✅"
+            progress_text = [
+                "Step 1/5: Incident Detected",
+                "Step 2/5: Cisco AIOps Tools Engaged",
+                "Step 3/5: Root Cause Identified",
+                "Step 4/5: Remediation Triggered",
+                "Step 5/5: Issue Resolved ✅"
+            ][i-1]
             progress_bar.progress(i * 20, text=progress_text)
 
         st.success("🎉 Scenario Completed Successfully!")
-
         st.markdown("---")
         st.subheader("📊 Outcome")
         if scenario == "Checkout Latency Spike":
             st.write("- AppDynamics flagged latency > 4s")
             st.write("- Intersight auto-scaled checkout app")
             st.write("- Transaction time reduced from 5.2s to 2.3s")
-            st.image("images/latency_spike_appd.png", caption="AppDynamics: Latency Spike in Checkout Flow")
+            try:
+                st.image("images/latency_spike_appd.png", caption="AppDynamics: Latency Spike in Checkout Flow")
+            except Exception:
+                st.warning("⚠️ Image failed to load. Please check file format and path.")
         elif scenario == "WAN Link Failure":
             st.write("- ThousandEyes detected outage")
             st.write("- SD-WAN rerouted traffic automatically")
             st.write("- No impact to store operations")
-            st.image("images/wan_outage_path.png", caption="ThousandEyes: Path Outage Detected and Rerouted")
+            try:
+                st.image("images/wan_outage_path.png", caption="ThousandEyes: Path Outage Detected and Rerouted")
+            except Exception:
+                st.warning("⚠️ Image failed to load. Please check file format and path.")
         elif scenario == "Unauthorized IoT Device":
             st.write("- SecureX flagged unknown MAC address")
             st.write("- Device quarantined within 45 seconds")
             st.write("- No lateral movement detected")
-            st.image("images/iot_securex_alert.png", caption="SecureX: IoT Device Quarantined")
+            try:
+                st.image("images/iot_securex_alert.png", caption="SecureX: IoT Device Quarantined")
+            except Exception:
+                st.warning("⚠️ Image failed to load. Please check file format and path.")
+
+# --- Tab 4: Strategy Overview ---
+with tab4:
+    st.header("🧭 Strategic Framework Overview")
+    st.markdown("This section outlines the platform strategy for Cisco + Walmart innovation.")
+
+    with st.expander("🌐 Modular Platform Architecture"):
+        try:
+            st.image("images/strategy_modularity.png", caption="Modular Architecture Across Domains")
+        except:
+            st.info("Upload 'strategy_modularity.png' to the images folder")
+        st.write("The strategy is built on modular domains: network, security, edge, observability...")
+
+    with st.expander("📈 Phased Rollout Model"):
+        try:
+            st.image("images/strategy_phased.png", caption="Phase 1 → Pilot | Phase 2 → Scale")
+        except:
+            st.info("Upload 'strategy_phased.png' to the images folder")
+        st.write("From pilot deployment to full-scale rollout across 5,000 stores...")
+
+    with st.expander("🔑 Success Metrics & Governance"):
+        try:
+            st.image("images/strategy_kpi.png", caption="Joint KPIs + Innovation Council")
+        except:
+            st.info("Upload 'strategy_kpi.png' to the images folder")
+        st.write("Joint KPIs, co-governance council, and quarterly reviews ensure value realization.")
+
+    try:
+        with open("Strategy Concept.pptx", "rb") as f:
+            st.download_button("📥 Download Full Strategy Deck", f, file_name="Cisco_Walmart_Strategy_Concept.pptx")
+    except:
+        st.warning("⚠️ Strategy deck not found. Upload 'Strategy Concept.pptx' to your app directory.")
 
 st.markdown("---")
 st.caption("Cisco Internal | Walmart Strategic Program Console")
-
