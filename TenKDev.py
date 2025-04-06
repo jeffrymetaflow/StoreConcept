@@ -164,6 +164,13 @@ with tab4:
             st.info("Upload 'strategy_kpi.png' to the images folder")
         st.write("Joint KPIs, co-governance council, and quarterly reviews ensure value realization.")
 
+    with st.expander("📦 Materials Module List"):
+        try:
+            st.image("images/module_materials_list.png", caption="Component Breakdown by Module")
+        except:
+            st.info("Upload 'module_materials_list.png' to the images folder")
+        st.write("This list outlines required hardware, licenses, and software by strategic domain.")
+
     try:
         with open("Strategy Concept.pptx", "rb") as f:
             st.download_button("📥 Download Full Strategy Deck", f, file_name="Cisco_Walmart_Strategy_Concept.pptx")
