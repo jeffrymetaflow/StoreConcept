@@ -245,22 +245,37 @@ st.caption("Cisco Internal | Walmart Strategic Program Console")
 # --- Tab 7: Cybersecurity Index ---
 with tab7:
     st.header("🔐 Cybersecurity Maturity Index")
-    st.markdown("This view displays maturity scoring by domain from the uploaded cybersecurity workbook.")
+    st.markdown("Automated assessment results from the Client Questionnaire.")
 
     try:
-        df_cyber = pd.read_excel("cyber_index.xlsx", sheet_name=0)
-        st.subheader("📄 Cybersecurity Domains Overview")
-        st.write("🔎 Columns found:", df_cyber.columns.tolist())
-        st.dataframe(df_cyber)
+        # Load and clean the questionnaire sheet
+        df_questionnaire = pd.read_excel("cyber_index.xlsx", sheet_name="Client Questionnaire", skiprows=16)
+        df_questionnaire = df_questionnaire.rename(columns={"Unnamed: 1": "Question", "Unnamed: 2": "Response"})
+        df_questionnaire = df_questionnaire[["Question", "Response"]].dropna()
 
-        st.subheader("📊 Maturity Scores by Domain")
-        if "Domain" in df_cyber.columns and "Score" in df_cyber.columns:
-            st.bar_chart(df_cyber.set_index("Domain")["Score"])
+        # Display data
+        st.subheader("📋 Questionnaire Responses")
+        st.dataframe(df_questionnaire)
+
+        # Count YES/NO
+        response_counts = df_questionnaire["Response"].value_counts()
+
+        st.subheader("📊 Summary of Responses")
+        st.bar_chart(response_counts)
+
+        # Maturity estimate
+        yes_count = response_counts.get("YES", 0)
+        if yes_count >= 15:
+            maturity_level = "High"
+        elif yes_count >= 8:
+            maturity_level = "Moderate"
         else:
-            st.warning("⚠️ Could not find 'Domain' and 'Score' columns for charting.")
+            maturity_level = "Low"
 
-    except FileNotFoundError:
-        st.warning("⚠️ Cybersecurity Index workbook not found. Please ensure it's uploaded correctly.")
+        st.metric("🔐 Estimated Cybersecurity Maturity Level", maturity_level)
+
+    except Exception as e:
+        st.warning(f"⚠️ Unable to load questionnaire data: {e}")
 
 # --- Tab 6: Cost Savings Tracker ---
 with tab6:
@@ -288,3 +303,4 @@ with tab6:
 
         st.subheader("📊 Savings Distribution by Store")
         st.bar_chart(df_savings.set_index("store")['savings'])
+
