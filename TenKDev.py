@@ -245,44 +245,45 @@ st.caption("Cisco Internal | Walmart Strategic Program Console")
 # --- Tab 7: Cybersecurity Index ---
 with tab7:
     st.header("🔐 Cybersecurity Maturity Index")
-    st.markdown("Automated assessment based on maturity stages defined by cybersecurity capabilities.")
+    st.markdown("Capability-based assessment from structured questionnaire responses.")
 
     try:
-        # Load and clean the questionnaire sheet
+        # Load the questionnaire with capability headers
         df_questionnaire = pd.read_excel("cyber_index.xlsx", sheet_name="Client Questionnaire", skiprows=16)
         df_questionnaire = df_questionnaire.rename(columns={"Unnamed: 1": "Question", "Unnamed: 2": "Response"})
         df_questionnaire = df_questionnaire[["Question", "Response"]].dropna()
 
-        # Map questions to simplified maturity stages
-        stages = [
-            ("Survival", 0, 10),
-            ("Measured", 10, 20),
-            ("Improving", 20, 30),
-            ("High Availability", 30, 40)
+        # Define updated maturity stages with new capability header segmentation
+        capability_stages = [
+            ("Survival", 0, 20),
+            ("Measured", 20, 40),
+            ("Improving", 40, 60),
+            ("High Availability", 60, 80),
+            ("Optimized", 80, 100)
         ]
 
-        maturity_map = []
-        for stage, start, end in stages:
+        capability_map = []
+        for stage, start, end in capability_stages:
             for i in range(start, end):
                 if i < len(df_questionnaire):
-                    maturity_map.append(stage)
+                    capability_map.append(stage)
 
-        df_questionnaire = df_questionnaire.iloc[:len(maturity_map)].copy()
-        df_questionnaire["Stage"] = maturity_map
+        df_questionnaire = df_questionnaire.iloc[:len(capability_map)].copy()
+        df_questionnaire["Capability Stage"] = capability_map
 
-        # Aggregate results
-        stage_summary = df_questionnaire.groupby(["Stage", "Response"]).size().unstack(fill_value=0)
+        # Aggregate results by capability stage
+        stage_summary = df_questionnaire.groupby(["Capability Stage", "Response"]).size().unstack(fill_value=0)
 
-        st.subheader("📊 Maturity Stage Summary")
+        st.subheader("📊 Capability Stage Summary")
         st.dataframe(stage_summary)
 
-        st.subheader("📈 YES Responses by Maturity Stage")
+        st.subheader("📈 YES Responses by Capability Stage")
         if "YES" in stage_summary.columns:
             st.bar_chart(stage_summary["YES"])
 
-        # Determine overall maturity stage based on highest YES count
+        # Highlight dominant capability maturity
         most_yes = stage_summary["YES"].idxmax()
-        st.metric("🔐 Estimated Maturity Focus", most_yes)
+        st.metric("🔐 Dominant Maturity Capability", most_yes)
 
     except Exception as e:
         st.warning(f"⚠️ Unable to load or analyze questionnaire data: {e}")
