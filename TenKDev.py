@@ -291,6 +291,32 @@ with tab7:
         stage_yes = df_questionnaire[df_questionnaire["Response"] == "YES"].groupby("Capability Stage").size()
         st.bar_chart(stage_yes)
 
+        # Calculate maturity score per function
+        st.subheader("📐 Maturity Score per Function")
+        function_stage_weights = {"Survival": 1, "Measured": 2, "Improving": 3, "High Availability": 4, "Optimized": 5}
+        df_questionnaire["Stage Weight"] = df_questionnaire["Capability Stage"].map(function_stage_weights)
+        df_questionnaire["Score"] = df_questionnaire.apply(lambda row: row["Stage Weight"] if row["Response"] == "YES" else 0, axis=1)
+
+        maturity_score = df_questionnaire.groupby("Function")["Score"].mean().round(2)
+        import matplotlib.pyplot as plt
+
+        # Color-coded bar chart for maturity scores
+        st.subheader("🎨 Color-Coded Maturity Chart")
+        fig, ax = plt.subplots()
+        colors = []
+        for score in maturity_score:
+            if score <= 2:
+                colors.append("red")
+            elif score <= 3.5:
+                colors.append("orange")
+            else:
+                colors.append("green")
+
+        maturity_score.plot(kind='bar', color=colors, ax=ax)
+        ax.set_ylabel("Average Score")
+        ax.set_title("Maturity Score by Function")
+        st.pyplot(fig)
+
         # Highlight dominant capability
         if not stage_yes.empty:
             st.metric("🔐 Dominant Maturity Capability", stage_yes.idxmax())
@@ -324,5 +350,3 @@ with tab6:
 
         st.subheader("📊 Savings Distribution by Store")
         st.bar_chart(df_savings.set_index("store")['savings'])
-
-       
