@@ -275,15 +275,20 @@ with tab7:
         df_questionnaire["Function"] = function_map
 
         st.subheader("📝 Interactive Questionnaire Editor")
+        df_questionnaire["Response"] = df_questionnaire["Response"].fillna("NO").astype(str).str.upper()
+        df_questionnaire["Question"] = df_questionnaire["Question"].fillna("Missing question text")
+
         for i in range(len(df_questionnaire)):
             question_label = f"{i+1}. {df_questionnaire.at[i, 'Question']}"
             current_response = df_questionnaire.at[i, 'Response']
-            df_questionnaire.at[i, 'Response'] = st.radio(
+            selected = st.radio(
                 question_label,
                 options=["YES", "NO"],
                 index=0 if current_response == "YES" else 1,
                 key=f"question_{i}"
             )
+            df_questionnaire.at[i, 'Response'] = selected
+
         st.markdown("---")
 
         # Grouped stage-function summary
@@ -359,4 +364,5 @@ with tab6:
 
         st.subheader("📊 Savings Distribution by Store")
         st.bar_chart(df_savings.set_index("store")['savings'])
+
 
