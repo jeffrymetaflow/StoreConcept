@@ -346,7 +346,10 @@ with tab7:
         st.error("❌ An error occurred during questionnaire processing.")
         st.exception(e)
         st.write("🧪 Debug Preview:")
-        st.write(df_questionnaire.head())
+        try:
+            st.write(df_questionnaire.head())
+        except:
+            st.info("⚠️ DataFrame not available. Likely failed during initial load.")
 
 # --- Tab 6: Cost Savings Tracker ---
 with tab6:
@@ -374,4 +377,3 @@ with tab6:
 
         st.subheader("📊 Savings Distribution by Store")
         st.bar_chart(df_savings.set_index("store")['savings'])
-
