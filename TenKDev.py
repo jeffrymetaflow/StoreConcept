@@ -279,8 +279,9 @@ with tab7:
         df_questionnaire["Question"] = df_questionnaire["Question"].fillna("Missing question text")
 
         for i in range(len(df_questionnaire)):
-            question_label = f"{i+1}. {df_questionnaire.at[i, 'Question']}"
-            current_response = str(df_questionnaire.at[i, 'Response']).strip().upper()
+            row = df_questionnaire.iloc[i]
+            question_label = f"{i+1}. {row['Question']}"
+            current_response = str(row['Response']).strip().upper()
             if current_response not in ["YES", "NO"]:
                 current_response = "NO"
             selected = st.radio(
@@ -289,7 +290,7 @@ with tab7:
                 index=0 if current_response == "YES" else 1,
                 key=f"question_{i}"
             )
-            df_questionnaire.at[i, 'Response'] = selected
+            df_questionnaire.iloc[i, df_questionnaire.columns.get_loc("Response")] = selected
 
         st.markdown("---")
 
@@ -373,3 +374,4 @@ with tab6:
 
         st.subheader("📊 Savings Distribution by Store")
         st.bar_chart(df_savings.set_index("store")['savings'])
+
