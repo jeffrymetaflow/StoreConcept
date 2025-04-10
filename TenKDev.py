@@ -245,7 +245,7 @@ st.caption("Cisco Internal | Walmart Strategic Program Console")
 # --- Tab 7: Cybersecurity Index ---
 with tab7:
     st.header("🔐 Cybersecurity Maturity Index")
-    st.markdown("Automated assessment results from the Client Questionnaire.")
+    st.markdown("Automated assessment based on maturity stages defined by cybersecurity capabilities.")
 
     try:
         # Load and clean the questionnaire sheet
@@ -253,29 +253,39 @@ with tab7:
         df_questionnaire = df_questionnaire.rename(columns={"Unnamed: 1": "Question", "Unnamed: 2": "Response"})
         df_questionnaire = df_questionnaire[["Question", "Response"]].dropna()
 
-        # Display data
-        st.subheader("📋 Questionnaire Responses")
-        st.dataframe(df_questionnaire)
+        # Map questions to simplified maturity stages
+        stages = [
+            ("Survival", 0, 10),
+            ("Measured", 10, 20),
+            ("Improving", 20, 30),
+            ("High Availability", 30, 40)
+        ]
 
-        # Count YES/NO
-        response_counts = df_questionnaire["Response"].value_counts()
+        maturity_map = []
+        for stage, start, end in stages:
+            for i in range(start, end):
+                if i < len(df_questionnaire):
+                    maturity_map.append(stage)
 
-        st.subheader("📊 Summary of Responses")
-        st.bar_chart(response_counts)
+        df_questionnaire = df_questionnaire.iloc[:len(maturity_map)].copy()
+        df_questionnaire["Stage"] = maturity_map
 
-        # Maturity estimate
-        yes_count = response_counts.get("YES", 0)
-        if yes_count >= 15:
-            maturity_level = "High"
-        elif yes_count >= 8:
-            maturity_level = "Moderate"
-        else:
-            maturity_level = "Low"
+        # Aggregate results
+        stage_summary = df_questionnaire.groupby(["Stage", "Response"]).size().unstack(fill_value=0)
 
-        st.metric("🔐 Estimated Cybersecurity Maturity Level", maturity_level)
+        st.subheader("📊 Maturity Stage Summary")
+        st.dataframe(stage_summary)
+
+        st.subheader("📈 YES Responses by Maturity Stage")
+        if "YES" in stage_summary.columns:
+            st.bar_chart(stage_summary["YES"])
+
+        # Determine overall maturity stage based on highest YES count
+        most_yes = stage_summary["YES"].idxmax()
+        st.metric("🔐 Estimated Maturity Focus", most_yes)
 
     except Exception as e:
-        st.warning(f"⚠️ Unable to load questionnaire data: {e}")
+        st.warning(f"⚠️ Unable to load or analyze questionnaire data: {e}")
 
 # --- Tab 6: Cost Savings Tracker ---
 with tab6:
@@ -303,4 +313,3 @@ with tab6:
 
         st.subheader("📊 Savings Distribution by Store")
         st.bar_chart(df_savings.set_index("store")['savings'])
-
