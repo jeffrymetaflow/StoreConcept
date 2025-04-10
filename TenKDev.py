@@ -338,7 +338,7 @@ with tab7:
         st.pyplot(fig)
 
         # Highlight dominant capability
-        if not stage_yes.empty:
+        if not stage_yes.empty and stage_yes.sum() > 0:
             st.metric("🔐 Dominant Maturity Capability", stage_yes.idxmax())
 
     except Exception as e:
