@@ -248,7 +248,6 @@ with tab7:
     st.markdown("Capability-based assessment from structured questionnaire responses.")
 
     try:
-        # Load the questionnaire with capability headers
         df_questionnaire = pd.read_excel("cyber_index.xlsx", sheet_name="Client Questionnaire", skiprows=16)
         df_questionnaire = df_questionnaire.rename(columns={"Unnamed: 1": "Question", "Unnamed: 2": "Response"})
         df_questionnaire = df_questionnaire[["Question", "Response"]].dropna()
@@ -263,27 +262,43 @@ with tab7:
         ]
 
         capability_map = []
-        for stage, start, end in capability_stages:
-            for i in range(start, end):
-                if i < len(df_questionnaire):
+        function_map = []
+        functions = ["Identify", "Protect", "Detect", "Respond", "Recover", "CIS"]
+        questions_per_function = int(len(df_questionnaire) / len(functions))
+
+        for i, (stage, start, end) in enumerate(capability_stages):
+            for j in range(start, end):
+                if j < len(df_questionnaire):
                     capability_map.append(stage)
+
+        for idx in range(len(df_questionnaire)):
+            function_idx = idx // questions_per_function
+            function_map.append(functions[min(function_idx, len(functions)-1)])
 
         df_questionnaire = df_questionnaire.iloc[:len(capability_map)].copy()
         df_questionnaire["Capability Stage"] = capability_map
+        df_questionnaire["Function"] = function_map
 
-        # Aggregate results by capability stage
-        stage_summary = df_questionnaire.groupby(["Capability Stage", "Response"]).size().unstack(fill_value=0)
+        st.subheader("📋 Full Questionnaire Breakdown")
+        st.dataframe(df_questionnaire)
 
-        st.subheader("📊 Capability Stage Summary")
+        # Grouped stage-function summary
+        stage_summary = df_questionnaire.groupby(["Function", "Capability Stage", "Response"]).size().unstack(fill_value=0)
+
+        st.subheader("📊 Responses by Function & Capability Stage")
         st.dataframe(stage_summary)
 
-        st.subheader("📈 YES Responses by Capability Stage")
-        if "YES" in stage_summary.columns:
-            st.bar_chart(stage_summary["YES"])
+        st.subheader("📈 YES Responses by Function")
+        yes_summary = df_questionnaire[df_questionnaire["Response"] == "YES"].groupby("Function").size()
+        st.bar_chart(yes_summary)
 
-        # Highlight dominant capability maturity
-        most_yes = stage_summary["YES"].idxmax()
-        st.metric("🔐 Dominant Maturity Capability", most_yes)
+        st.subheader("📈 YES Responses by Capability Stage")
+        stage_yes = df_questionnaire[df_questionnaire["Response"] == "YES"].groupby("Capability Stage").size()
+        st.bar_chart(stage_yes)
+
+        # Highlight dominant capability
+        if not stage_yes.empty:
+            st.metric("🔐 Dominant Maturity Capability", stage_yes.idxmax())
 
     except Exception as e:
         st.warning(f"⚠️ Unable to load or analyze questionnaire data: {e}")
