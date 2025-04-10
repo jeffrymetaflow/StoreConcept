@@ -283,16 +283,13 @@ with tab7:
             current_response = str(df_questionnaire.at[i, 'Response']).strip().upper()
             if current_response not in ["YES", "NO"]:
                 current_response = "NO"
-            try:
-                selected = st.radio(
-                    question_label,
-                    options=["YES", "NO"],
-                    index=0 if current_response == "YES" else 1,
-                    key=f"question_{i}"
-                )
-                df_questionnaire.at[i, 'Response'] = selected
-            except Exception as e:
-                st.error(f"Error at question {i+1}: {e}")
+            selected = st.radio(
+                question_label,
+                options=["YES", "NO"],
+                index=0 if current_response == "YES" else 1,
+                key=f"question_{i}"
+            )
+            df_questionnaire.at[i, 'Response'] = selected
 
         st.markdown("---")
 
