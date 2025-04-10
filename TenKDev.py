@@ -14,7 +14,7 @@ st.set_page_config(
 st.title("📊 Walmart–Cisco Platform Rollout Console")
 
 # Tabs for multiple functions
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["💰 Cost Simulator", "📊 KPI Tracker", "🧪 Scenario Simulator", "🧭 Strategy Overview", "🌍 Global Store Rollout Map", "💡 Cost Savings Tracker"])
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(["💰 Cost Simulator", "📊 KPI Tracker", "🧪 Scenario Simulator", "🧭 Strategy Overview", "🌍 Global Store Rollout Map", "💡 Cost Savings Tracker", "🔐 Cybersecurity Index"])
 
 # --- Tab 1: Cost Simulator ---
 with tab1:
@@ -242,6 +242,25 @@ with tab5:
 st.markdown("---")
 st.caption("Cisco Internal | Walmart Strategic Program Console")
 
+# --- Tab 7: Cybersecurity Index ---
+with tab7:
+    st.header("🔐 Cybersecurity Maturity Index")
+    st.markdown("This view displays maturity scoring by domain from the uploaded cybersecurity workbook.")
+
+    try:
+        df_cyber = pd.read_excel("Cybersecurity Maturity Index Workbook vJS.xlsx", sheet_name=0)
+        st.subheader("📄 Cybersecurity Domains Overview")
+        st.dataframe(df_cyber)
+
+        st.subheader("📊 Maturity Scores by Domain")
+        if "Domain" in df_cyber.columns and "Score" in df_cyber.columns:
+            st.bar_chart(df_cyber.set_index("Domain")["Score"])
+        else:
+            st.warning("⚠️ Could not find 'Domain' and 'Score' columns for charting.")
+
+    except FileNotFoundError:
+        st.warning("⚠️ Cybersecurity Index workbook not found. Please ensure it's uploaded correctly.")
+
 # --- Tab 6: Cost Savings Tracker ---
 with tab6:
     st.header("💡 Cost Savings Tracker")
@@ -268,4 +287,3 @@ with tab6:
 
         st.subheader("📊 Savings Distribution by Store")
         st.bar_chart(df_savings.set_index("store")['savings'])
-
