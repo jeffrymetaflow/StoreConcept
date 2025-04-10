@@ -252,30 +252,18 @@ with tab7:
         df_questionnaire = df_questionnaire.rename(columns={"Unnamed: 1": "Question", "Unnamed: 2": "Response"})
         df_questionnaire = df_questionnaire[["Question", "Response"]].dropna()
 
-        # Define updated maturity stages with new capability header segmentation
-        capability_stages = [
-            ("Survival", 0, 20),
-            ("Measured", 20, 40),
-            ("Improving", 40, 60),
-            ("High Availability", 60, 80),
-            ("Optimized", 80, 100)
-        ]
-
+        # Define dynamic capability stage mapping
+        capability_labels = ["Survival", "Measured", "Improving", "High Availability", "Optimized"]
+        capability_size = len(df_questionnaire) // len(capability_labels)
         capability_map = []
-        function_map = []
-        functions = ["Identify", "Protect", "Detect", "Respond", "Recover", "CIS"]
-        questions_per_function = int(len(df_questionnaire) / len(functions))
 
-        for i, (stage, start, end) in enumerate(capability_stages):
-            for j in range(start, end):
-                if j < len(df_questionnaire):
-                    capability_map.append(stage)
+        for label in capability_labels:
+            capability_map += [label] * capability_size
 
-        for idx in range(len(df_questionnaire)):
-            function_idx = idx // questions_per_function
-            function_map.append(functions[min(function_idx, len(functions)-1)])
-
-        df_questionnaire = df_questionnaire.iloc[:len(capability_map)].copy()
+        # Fill remaining rows
+        capability_map += [capability_labels[-1]] * (len(df_questionnaire) - len(capability_map))
+        df_questionnaire = df_questionnaire.copy()
+        df_questionnaire["Capability Stage"] = capability_map
         df_questionnaire["Capability Stage"] = capability_map
         df_questionnaire["Function"] = function_map
 
