@@ -311,15 +311,11 @@ with tab7:
         st.subheader("📐 Maturity Score per Function")
         function_stage_weights = {"Survival": 1, "Measured": 2, "Improving": 3, "High Availability": 4, "Optimized": 5}
         df_questionnaire["Stage Weight"] = df_questionnaire["Capability Stage"].map(function_stage_weights)
-        try:
-            df_questionnaire["Score"] = df_questionnaire.apply(
+        df_questionnaire["Score"] = df_questionnaire.apply(
             lambda row: row["Stage Weight"] if row["Response"] == "YES" else 0,
             axis=1
         )
-    except Exception as ex:
-        st.error(f"❌ Error computing scores: {ex}")
-        st.write(df_questionnaire[["Response", "Stage Weight"]])
-        raise
+    
 
         maturity_score = df_questionnaire.groupby("Function")["Score"].mean().round(2)
         import matplotlib.pyplot as plt
@@ -374,5 +370,6 @@ with tab6:
 
         st.subheader("📊 Savings Distribution by Store")
         st.bar_chart(df_savings.set_index("store")['savings'])
+
 
         
