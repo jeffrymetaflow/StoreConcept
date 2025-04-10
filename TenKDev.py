@@ -248,7 +248,7 @@ with tab7:
     st.markdown("This view displays maturity scoring by domain from the uploaded cybersecurity workbook.")
 
     try:
-        df_cyber = pd.read_excel("Cybersecurity Maturity Index Workbook vJS.xlsx", sheet_name=0)
+        df_cyber = pd.read_excel("cyber_index.xlsx", sheet_name=0)
         st.subheader("📄 Cybersecurity Domains Overview")
         st.dataframe(df_cyber)
 
@@ -287,3 +287,4 @@ with tab6:
 
         st.subheader("📊 Savings Distribution by Store")
         st.bar_chart(df_savings.set_index("store")['savings'])
+
