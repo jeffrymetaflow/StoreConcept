@@ -241,3 +241,30 @@ with tab5:
 
 st.markdown("---")
 st.caption("Cisco Internal | Walmart Strategic Program Console")
+
+# --- Tab 6: Cost Savings Tracker ---
+with tab6:
+    st.header("💡 Cost Savings Tracker")
+    st.markdown("Track cost savings progress store by store to support the $1B savings goal.")
+
+    if "savings_data" not in st.session_state:
+        st.session_state.savings_data = []
+
+    savings_store = st.text_input("Store ID or Region (Savings Tab):")
+    savings_amount = st.number_input("Estimated Savings for This Store ($)", min_value=0.0, step=1000.0)
+
+    if st.button("Add Cost Savings Record"):
+        st.session_state.savings_data.append({
+            "store": savings_store,
+            "savings": savings_amount
+        })
+
+    if st.session_state.savings_data:
+        df_savings = pd.DataFrame(st.session_state.savings_data)
+        total_savings = df_savings["savings"].sum()
+
+        st.metric("💰 Cumulative Estimated Savings", f"${total_savings:,.0f}", help="Total across all stores")
+        st.dataframe(df_savings)
+
+        st.subheader("📊 Savings Distribution by Store")
+        st.bar_chart(df_savings.set_index("store")['savings'])
