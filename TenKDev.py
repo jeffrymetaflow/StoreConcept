@@ -265,6 +265,13 @@ with tab7:
         df_questionnaire = df_questionnaire.copy()
         df_questionnaire["Capability Stage"] = capability_map
         df_questionnaire["Capability Stage"] = capability_map
+        # Define function mapping based on number of questions
+        functions = ["Identify", "Protect", "Detect", "Respond", "Recover", "CIS"]
+        questions_per_function = len(df_questionnaire) // len(functions)
+        function_map = []
+        for idx in range(len(df_questionnaire)):
+            function_idx = idx // questions_per_function
+            function_map.append(functions[min(function_idx, len(functions) - 1)])
         df_questionnaire["Function"] = function_map
 
         st.subheader("📋 Full Questionnaire Breakdown")
@@ -317,3 +324,5 @@ with tab6:
 
         st.subheader("📊 Savings Distribution by Store")
         st.bar_chart(df_savings.set_index("store")['savings'])
+
+       
