@@ -280,7 +280,9 @@ with tab7:
 
         for i in range(len(df_questionnaire)):
             question_label = f"{i+1}. {df_questionnaire.at[i, 'Question']}"
-            current_response = df_questionnaire.at[i, 'Response']
+            current_response = str(df_questionnaire.at[i, 'Response']).strip().upper()
+            if current_response not in ["YES", "NO"]:
+                current_response = "NO"
             selected = st.radio(
                 question_label,
                 options=["YES", "NO"],
@@ -364,5 +366,6 @@ with tab6:
 
         st.subheader("📊 Savings Distribution by Store")
         st.bar_chart(df_savings.set_index("store")['savings'])
+
 
 
