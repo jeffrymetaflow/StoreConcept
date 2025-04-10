@@ -250,6 +250,7 @@ with tab7:
     try:
         df_cyber = pd.read_excel("cyber_index.xlsx", sheet_name=0)
         st.subheader("📄 Cybersecurity Domains Overview")
+        st.write("🔎 Columns found:", df_cyber.columns.tolist())
         st.dataframe(df_cyber)
 
         st.subheader("📊 Maturity Scores by Domain")
@@ -287,4 +288,3 @@ with tab6:
 
         st.subheader("📊 Savings Distribution by Store")
         st.bar_chart(df_savings.set_index("store")['savings'])
-
