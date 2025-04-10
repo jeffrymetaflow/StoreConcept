@@ -274,25 +274,7 @@ with tab7:
             function_map.append(functions[min(function_idx, len(functions) - 1)])
         df_questionnaire["Function"] = function_map
 
-        st.subheader("📝 Interactive Questionnaire Editor")
-        df_questionnaire["Response"] = df_questionnaire["Response"].fillna("NO").astype(str).str.upper()
-        df_questionnaire["Question"] = df_questionnaire["Question"].fillna("Missing question text")
-
-        for i in range(len(df_questionnaire)):
-            row = df_questionnaire.iloc[i]
-            question_label = f"{i+1}. {row['Question']}"
-            current_response = str(row['Response']).strip().upper()
-            if current_response not in ["YES", "NO"]:
-                current_response = "NO"
-            selected = st.radio(
-                question_label,
-                options=["YES", "NO"],
-                index=0 if current_response == "YES" else 1,
-                key=f"question_{i}"
-            )
-            df_questionnaire.iloc[i, df_questionnaire.columns.get_loc("Response")] = selected
-
-        st.markdown("---")
+        
 
         # Grouped stage-function summary
         stage_summary = df_questionnaire.groupby(["Function", "Capability Stage", "Response"]).size().unstack(fill_value=0)
@@ -342,6 +324,26 @@ with tab7:
         if not stage_yes.empty and stage_yes.sum() > 0:
             st.metric("🔐 Dominant Maturity Capability", stage_yes.idxmax())
 
+        st.subheader("📝 Interactive Questionnaire Editor")
+        df_questionnaire["Response"] = df_questionnaire["Response"].fillna("NO").astype(str).str.upper()
+        df_questionnaire["Question"] = df_questionnaire["Question"].fillna("Missing question text")
+
+        for i in range(len(df_questionnaire)):
+            row = df_questionnaire.iloc[i]
+            question_label = f"{i+1}. {row['Question']}"
+            current_response = str(row['Response']).strip().upper()
+            if current_response not in ["YES", "NO"]:
+                current_response = "NO"
+            selected = st.radio(
+                question_label,
+                options=["YES", "NO"],
+                index=0 if current_response == "YES" else 1,
+                key=f"question_{i}"
+            )
+            df_questionnaire.iloc[i, df_questionnaire.columns.get_loc("Response")] = selected
+
+        st.markdown("---")
+
     except Exception as e:
         st.error("❌ An error occurred during questionnaire processing.")
         st.exception(e)
@@ -377,3 +379,4 @@ with tab6:
 
         st.subheader("📊 Savings Distribution by Store")
         st.bar_chart(df_savings.set_index("store")['savings'])
+
