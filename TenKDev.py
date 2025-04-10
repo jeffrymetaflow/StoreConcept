@@ -274,8 +274,17 @@ with tab7:
             function_map.append(functions[min(function_idx, len(functions) - 1)])
         df_questionnaire["Function"] = function_map
 
-        st.subheader("📋 Full Questionnaire Breakdown")
-        st.dataframe(df_questionnaire)
+        st.subheader("📝 Interactive Questionnaire Editor")
+        for i in range(len(df_questionnaire)):
+            question_label = f"{i+1}. {df_questionnaire.at[i, 'Question']}"
+            current_response = df_questionnaire.at[i, 'Response']
+            df_questionnaire.at[i, 'Response'] = st.radio(
+                question_label,
+                options=["YES", "NO"],
+                index=0 if current_response == "YES" else 1,
+                key=f"question_{i}"
+            )
+        st.markdown("---")
 
         # Grouped stage-function summary
         stage_summary = df_questionnaire.groupby(["Function", "Capability Stage", "Response"]).size().unstack(fill_value=0)
@@ -350,3 +359,4 @@ with tab6:
 
         st.subheader("📊 Savings Distribution by Store")
         st.bar_chart(df_savings.set_index("store")['savings'])
+
