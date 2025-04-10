@@ -14,7 +14,7 @@ st.set_page_config(
 st.title("📊 Walmart–Cisco Platform Rollout Console")
 
 # Tabs for multiple functions
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["💰 Cost Simulator", "📊 KPI Tracker", "🧪 Scenario Simulator", "🧭 Strategy Overview", "🌍 Global Store Rollout Map"])
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["💰 Cost Simulator", "📊 KPI Tracker", "🧪 Scenario Simulator", "🧭 Strategy Overview", "🌍 Global Store Rollout Map", "💡 Cost Savings Tracker"])
 
 # --- Tab 1: Cost Simulator ---
 with tab1:
@@ -268,3 +268,4 @@ with tab6:
 
         st.subheader("📊 Savings Distribution by Store")
         st.bar_chart(df_savings.set_index("store")['savings'])
+
