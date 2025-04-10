@@ -342,7 +342,10 @@ with tab7:
             st.metric("🔐 Dominant Maturity Capability", stage_yes.idxmax())
 
     except Exception as e:
-        st.warning(f"⚠️ Unable to load or analyze questionnaire data: {e}")
+        st.error("❌ An error occurred during questionnaire processing.")
+        st.exception(e)
+        st.write("🧪 Debug Preview:")
+        st.write(df_questionnaire.head())
 
 # --- Tab 6: Cost Savings Tracker ---
 with tab6:
@@ -370,6 +373,3 @@ with tab6:
 
         st.subheader("📊 Savings Distribution by Store")
         st.bar_chart(df_savings.set_index("store")['savings'])
-
-
-        
