@@ -105,6 +105,11 @@ with tab2:
         st.subheader("🔍 AI Recommendations")
         st.dataframe(df_kpi)
 
+        st.subheader("📊 KPI Distribution Charts")
+        st.bar_chart(df_kpi.set_index("store_id")["uptime"])
+        st.bar_chart(df_kpi.set_index("store_id")["latency"])
+        st.bar_chart(df_kpi.set_index("store_id")["cx_score"])
+
 # --- Tab 3: Scenario Simulator ---
 with tab3:
     st.header("🧪 Scenario Simulator")
