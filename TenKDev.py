@@ -83,6 +83,28 @@ with tab2:
     st.write(f"**Latency**: {latency} ms")
     st.write(f"**CX Score**: {cx_score}/10")
 
+    st.subheader("🔍 AI Recommendations")
+    df_kpi = pd.DataFrame([{
+        "store_id": store_id,
+        "uptime": uptime,
+        "latency": latency,
+        "cx_score": cx_score
+    }])
+
+    def recommend_kpi_actions(row):
+        recs = []
+        if row["uptime"] < 95:
+            recs.append("⚠️ Improve network reliability")
+        if row["latency"] > 90:
+            recs.append("🚀 Optimize app performance")
+        if row["cx_score"] < 6:
+            recs.append("📞 Investigate low CX feedback")
+        return ", ".join(recs) if recs else "✅ No immediate action"
+
+    df_kpi["recommendation"] = df_kpi.apply(recommend_kpi_actions, axis=1)
+
+    st.dataframe(df_kpi)
+
 # --- Tab 3: Scenario Simulator ---
 with tab3:
     st.header("🧪 Scenario Simulator")
