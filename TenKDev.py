@@ -72,24 +72,13 @@ with tab2:
     st.header("📊 Pilot KPI Dashboard")
     st.markdown("Enter real or test data to simulate pilot rollout metrics.")
 
+    if "kpi_data" not in st.session_state:
+        st.session_state.kpi_data = []
+
     store_id = st.text_input("Store ID or Region:")
     uptime = st.slider("Network Uptime (%)", 90, 100, 99)
     latency = st.slider("Avg. Latency (ms)", 10, 200, 75)
     cx_score = st.slider("Customer Experience Index (1–10)", 1, 10, 8)
-
-    st.subheader("🧾 Summary:")
-    st.write(f"**Store ID**: {store_id}")
-    st.write(f"**Network Uptime**: {uptime}%")
-    st.write(f"**Latency**: {latency} ms")
-    st.write(f"**CX Score**: {cx_score}/10")
-
-    st.subheader("🔍 AI Recommendations")
-    df_kpi = pd.DataFrame([{
-        "store_id": store_id,
-        "uptime": uptime,
-        "latency": latency,
-        "cx_score": cx_score
-    }])
 
     def recommend_kpi_actions(row):
         recs = []
@@ -101,9 +90,20 @@ with tab2:
             recs.append("📞 Investigate low CX feedback")
         return ", ".join(recs) if recs else "✅ No immediate action"
 
-    df_kpi["recommendation"] = df_kpi.apply(recommend_kpi_actions, axis=1)
+    if st.button("Add KPI Record"):
+        new_row = {
+            "store_id": store_id,
+            "uptime": uptime,
+            "latency": latency,
+            "cx_score": cx_score
+        }
+        new_row["recommendation"] = recommend_kpi_actions(new_row)
+        st.session_state.kpi_data.append(new_row)
 
-    st.dataframe(df_kpi)
+    if st.session_state.kpi_data:
+        df_kpi = pd.DataFrame(st.session_state.kpi_data)
+        st.subheader("🔍 AI Recommendations")
+        st.dataframe(df_kpi)
 
 # --- Tab 3: Scenario Simulator ---
 with tab3:
