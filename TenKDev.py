@@ -312,7 +312,7 @@ with tab7:
         function_stage_weights = {"Survival": 1, "Measured": 2, "Improving": 3, "High Availability": 4, "Optimized": 5}
         df_questionnaire["Stage Weight"] = df_questionnaire["Capability Stage"].map(function_stage_weights)
         try:
-        df_questionnaire["Score"] = df_questionnaire.apply(
+            df_questionnaire["Score"] = df_questionnaire.apply(
             lambda row: row["Stage Weight"] if row["Response"] == "YES" else 0,
             axis=1
         )
@@ -375,3 +375,4 @@ with tab6:
         st.subheader("📊 Savings Distribution by Store")
         st.bar_chart(df_savings.set_index("store")['savings'])
 
+        
